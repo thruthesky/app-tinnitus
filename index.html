@@ -101,6 +101,10 @@
 					trace("vol:"+vol);
 					ms[file].setVolume(vol);
 				});
+				
+				play_audio('white-noise');
+				ms[file].setVolume(1.0);
+				
 			});
 			
 			function callback_device_ready()
@@ -111,7 +115,9 @@
 			}
 			
 			function play_audio(file) {
-				var url = "/android_asset/www/tinnitus/" + file + ".mp3";
+				var url = "/android_asset/www/app-tinnitus/sound/" + file + ".mp3";
+				trace("url 1: " + url);
+				
 				// Play the audio file at url
 				ms[file] = new Media(url,
 					// success callback
