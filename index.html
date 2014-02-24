@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+        <title>Tinnitus</title>
+		<!--[if lt IE 9]>
+			<script src="../app-library/js/jquery/jquery-1.11.0.min.js"></script>
+		<![endif]-->
+		<!--[if gte IE 9]><!-->
+			<script src="../app-library/js/jquery/jquery-2.1.0.min.js"></script>
+		<!--<![endif]-->
+		<script src="../app-library/js/mobileinit.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/index.css">
+		
+		<!-- Add CSS files here if you need -->
+		<link rel="stylesheet" type="text/css" href="css/cebu-city.css">
+		<!--<link rel="stylesheet" type="text/css" href="css/company-book.css">-->
+		<style>
+			.play, .stop, .volume {
+				cursor: pointer;
+			}
+			.play {
+				display:inline-block;
+				margin: 0 0 0 4px;
+				padding: 6px 12px 6px 12px;
+				border: 1px solid grey;
+				border-radius: 2px;
+				font-weight: bold;
+				color: blue;
+			}
+			.stop, .volume {
+				display: none;
+			}
+			
+			.stop {
+				margin: 0 0 0 4px;
+				padding: 6px 12px 6px 12px;
+				border: 1px solid darkred;
+				border-radius: 2px;
+				font-weight: bold;
+				color: red;
+			}
+			
+			#sound-list .title {
+				display:inline-block;
+				border: 1px solid blue;
+				width: 40%;
+			}
+			
+		</style>
+		<script>
+			/** Debugging mode */
+			var debug = 0;
+			var ms = new Object();//{};
+			$(function(){
+				$('#sound-list li').each(function(){
+					$(this).append("<span class='play'>Play</span> <span class='stop'>Stop</span> <span class='volume'><select><option value=''>Volume</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option><option value='11'>11</option><option value='12'>12</option><option value='13'>13</option><option value='14'>14</option><option value='15'>15</option></select></span>");
+				});
+				
+				$('body').on( 'click', '.play', function(){
+					var $p = $(this).parent();
+					var file = $p.prop('id');
+					$p.find('.stop').show();
+					$p.find('.volume').show();
+					$(this).hide();
+					
+					
+					$p.find('.volume select').val(5);
+					
+					play_audio( file );
+					ms[file].setVolume(1.0);
+					
+				});
+				$('body').on( 'click', '.stop', function(){
+					var $p = $(this).parent();
+					var file = $p.prop('id');
+					$p.find('.play').show();
+					$p.find('.volume').hide();
+					$(this).hide();
+					
+					
+					play_pause( file );
+				});
+				
+				$('body').on( 'change', '.volume select', function(){
+					
+					var volume = $(this).val();
+					var file = $(this).parent().parent().prop('id');
+					var vol;
+					var v = parseInt(volume);
+					if ( v < 10 ) vol = "0.0"+volume;
+					else if ( v == 10 ) vol = "0.1";
+					else if ( v == 11 ) vol = "0.2";
+					else if ( v == 12 ) vol = "0.4";
+					else if ( v == 14 ) vol = "0.6";
+					else if ( v == 15 ) vol = "1.0";
+					else vol = "1.0";
+					
+					trace("vol:"+vol);
+					ms[file].setVolume(vol);
+				});
+			});
+			
+			function callback_device_ready()
+			{
+				//play_audio('/android_asset/www/tinnitus/rain_with_pygmy_owl.mp3');
+				//play_audio('/android_asset/www/tinnitus/small_green_groggies.mp3');
+				//play_audio('/android_asset/www/tinnitus/marsh.mp3');
+			}
+			
+			function play_audio(file) {
+				var url = "/android_asset/www/tinnitus/" + file + ".mp3";
+				// Play the audio file at url
+				ms[file] = new Media(url,
+					// success callback
+					function () {
+						console.log("playAudio():Audio Success");
+					},
+					// error callback
+					function (err) {
+						console.log("playAudio():Audio Error: code=" + err.code + ", message=" + err.message );
+					}
+				);
+				
+				trace("Play: " + url );
+				// Play audio
+				ms[file].play();
+			}
+			function play_pause(file) {
+				ms[file].pause();
+			}
+
+			
+		</script>
+		<script src="js/index.js"></script>
+		<script src="../app-library/js/default.js"></script>
+		
+		<!-- Add Javascript file here -->
+		
+    </head>
+    <body>
+		<div id='layout'>
+			<div class='header'>
+				<ul>
+					<li>
+						<a href='#'>
+							<div><img src="img/logo.png"></div>
+							<div>홈페이지</div>
+						</a>
+					</li>
+					<li>
+						<a href='#'>
+							<div><img src="img/copy-documents.png"></div>
+							<div>자유토론</div>
+						</a>
+					</li>
+					<li>
+						<a href='#'>
+							<div><img src="img/help-symbol2.png"></div>
+							<div>질문답변</div>
+						</a>
+					</li>
+					<li>
+						<a href='#'>
+							<div><img src="img/palm-tree.png"></div>
+							<div>이명치료</div>
+						</a>
+					</li>
+				</ul>
+				<div style="clear:both;"></div>
+			</div>
+			<div class='content'>
+				<!-- First Page -->
+				
+				<ul id='sound-list'>
+				<li id='rain_with_pygmy_owl'><span class='title'>비와 부엉이</span></li>
+				<li id='small_green_groggies'><span class='title'>청개구리</span></li>
+				<li id='marsh'><span class='title'>습지(늪)</span></li>
+				<li id='deep_woods'><span class='title'>깊은 산속</span></li>
+				<li id='songbirds'><span class='title'>새소리</span></li>
+				<li id='white-noise'><span class='title'>백색소음</span></li>
+				</ul>
+				
+			</div>
+			<div class='footer'>
+				<div class='title'><a href='http://ringing.co.kr'>이명을 사랑하는 사람들의 모임 www.ringing.co.kr</a></div>
+			</div>
+		</div>
+		
+    </body>
+</html>
